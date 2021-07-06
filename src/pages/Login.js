@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { Form, Button, Container } from 'react-bootstrap'
-import jwtDecode from 'jwt-decode';
-import axios from 'axios';
+
+import { connect } from 'react-redux'
+
+import { login } from '../redux/actions/auth'
 
 class Login extends Component {
   state = {
@@ -9,23 +11,16 @@ class Login extends Component {
     password: '',
   }
 
-  login = () => {
-    const { username, password } = this.state;
-    const params = new URLSearchParams();
-    params.append('username', username);
-    params.append('password', password);
-    axios.post(`http://localhost:8080/api/login`, params)
-      .then(params => {
-        const response = params.data.results;
-        const tokenData = jwtDecode(response);
-        localStorage.setItem("token", response)
-        localStorage.setItem("expiresIn", tokenData.exp * 1000)
-        localStorage.setItem("role", tokenData.role)
-        this.props.history.push(`/home`);
-      })
-      .catch(err => {
-        alert("Username or password didnt match")
-      })
+  componentDidUpdate(){
+    if(this.props.auth.token){
+      this.props.history.push(`/home`);
+    }
+  }
+
+  submitData = (e) => {
+    e.preventDefault();
+    const { username, password } = this.state
+    this.props.login(username, password)
   }
 
   changeText = (event) => {
@@ -45,7 +40,7 @@ class Login extends Component {
               <Form.Label>Password</Form.Label>
               <Form.Control name="password" onChange={(event) => this.changeText(event)} type="password" placeholder="Enter your password" />
             </Form.Group>
-            <Button onClick={this.login}>Login</Button>
+            <Button onClick={this.submitData}>Login</Button>
           </Form>
         </Container>
       </React.Fragment>
@@ -53,4 +48,10 @@ class Login extends Component {
   }
 }
 
-export default Login
+const mapStateToProps = state => (
+  { auth: state.auth }
+)
+
+const mapDispatchToProps = { login }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

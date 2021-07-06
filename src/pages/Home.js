@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
+import { connect } from 'react-redux'
 
-class Login extends Component {
+import { logout } from '../redux/actions/auth'
+
+class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,9 +18,9 @@ class Login extends Component {
     this.initData();
   }
 
-  logout = () => {
-    localStorage.clear();
-  }
+  // logout = () => {
+  //   localStorage.clear();
+  // }
 
   initData = () => {
     const config = {
@@ -30,7 +33,6 @@ class Login extends Component {
         const response = res.data;
         const staff = response.data;
         this.setState({ staff });
-        console.log(this.state.staff);
       })
       .catch(error => {
         console.log(error);
@@ -42,33 +44,43 @@ class Login extends Component {
     return (
       <React.Fragment>
         <h1 className="text-center mt-5 mb-5">All Mitrais Staff</h1>
-        {localStorage.getItem('role') == 1 ? <p>Sorry y cannot access the data from this page</p> : 
-        <table className="justify-content-center">
-          <thead>
-            <tr>
-              <th style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>Name</th>
-              <th style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>Email</th>
-              <th style={{ width: '100px', textAlign: 'center', border: '1px solid black' }}>Grade</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staff.map((item) => {
-              return (
-                <tr key={item._id}>
-                  <td style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>{item.name}</td>
-                  <td style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>{item.email}</td>
-                  <td style={{ width: '100px', textAlign: 'center', border: '1px solid black' }}>{item.grade}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <h1>{this.props.token}</h1>
+        {localStorage.getItem('role') == 1 ? <p>Sorry y cannot access the data from this page</p> :
+          <table className="justify-content-center">
+            <thead>
+              <tr>
+                <th style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>Name</th>
+                <th style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>Email</th>
+                <th style={{ width: '100px', textAlign: 'center', border: '1px solid black' }}>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {staff.map((item) => {
+                return (
+                  <tr key={item._id}>
+                    <td style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>{item.name}</td>
+                    <td style={{ width: '300px', textAlign: 'center', border: '1px solid black' }}>{item.email}</td>
+                    <td style={{ width: '100px', textAlign: 'center', border: '1px solid black' }}>{item.grade}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         }
-        <button onClick={this.logout}>
+        <button onClick={this.props.logout}>
           <Link to='/'>Logout</Link></button>
+
+        {/* <button onClick={this.logout}>
+          <Link to='/'>Logout</Link></button> */}
       </React.Fragment>
     )
   }
 }
 
-export default Login
+const mapStateToProps = state => (
+  { token: state.auth.token }
+)
+
+const mapDispatchToProps = { logout }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
