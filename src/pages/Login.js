@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-import { Form, Button, Container, Alert } from 'react-bootstrap'
+import { Form, Button, Container } from 'react-bootstrap'
+import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 
 class Login extends Component {
@@ -10,13 +10,18 @@ class Login extends Component {
   }
 
   login = () => {
-    const {username, password} = this.state;
+    const { username, password } = this.state;
     const params = new URLSearchParams();
     params.append('username', username);
     params.append('password', password);
     axios.post(`http://localhost:8080/api/login`, params)
       .then(params => {
-        this.props.history.push(`/transaction`);
+        const response = params.data.results;
+        const tokenData = jwtDecode(response);
+        localStorage.setItem("token", response)
+        localStorage.setItem("expiresIn", tokenData.exp * 1000)
+        localStorage.setItem("role", tokenData.role)
+        this.props.history.push(`/home`);
       })
       .catch(err => {
         alert("Username or password didnt match")
