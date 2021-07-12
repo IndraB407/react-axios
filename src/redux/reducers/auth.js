@@ -26,6 +26,12 @@ const authReducer = (state = initialState, action) => {
         role: '',
       }
     }
+    case 'AUTH_CHECK_TOKEN': {
+      return {
+        ...state,
+        token: action.payload,
+      }
+    }
     default: {
       return {
         ...state

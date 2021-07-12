@@ -48,20 +48,20 @@ export const logout = () => {
   };
 };
 
-// export const getUser = (token) => {
-//   return async (dispatch) => {
-//     try {
-//       const results = await http(token).get('/api/getById');
-//       dispatch({
-//         type: 'UPDATE_PROFILE_DETAILS',
-//         payload: results.data.results,
-//       });
-//     } catch (err) {
-//       const {message} = err.response.data;
-//       dispatch({
-//         type: 'SET_UPDATE_PROFILE_DETAILS_MESSAGE',
-//         payload: message,
-//       });
-//     }
-//   };
-// };
+export const authCheckToken = () => {
+  return async (dispatch) => {
+    const token = localStorage.getItem('token');
+    console.log('token', token);
+    if (token) {
+      dispatch({
+        type: 'AUTH_CHECK_TOKEN',
+        payload: token
+      })
+    } else {
+      dispatch({
+        type: 'AUTH_CHECK_TOKEN',
+        payload: null,
+      })
+    }
+  }
+};

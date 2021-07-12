@@ -11,12 +11,6 @@ class Login extends Component {
     password: '',
   }
 
-  componentDidUpdate(){
-    if(this.props.auth.token){
-      this.props.history.push(`/home`);
-    }
-  }
-
   submitData = (e) => {
     e.preventDefault();
     const { username, password } = this.state

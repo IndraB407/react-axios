@@ -4,6 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux'
 
 import { logout } from '../redux/actions/auth'
+import { getUser } from '../redux/actions/user'
 
 class Home extends Component {
   constructor(props) {
@@ -15,28 +16,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    this.initData();
-  }
-
-  // logout = () => {
-  //   localStorage.clear();
-  // }
-
-  initData = () => {
-    const config = {
-      headers: {
-        authorization: 'Bearer ' + localStorage.getItem('token')
-      }
-    }
-    axios.get(`http://localhost:8080/api/users/getAll`, config)
-      .then(res => {
-        const response = res.data;
-        const staff = response.data;
-        this.setState({ staff });
-      })
-      .catch(error => {
-        console.log(error);
-      })
+    this.props.getUser(localStorage.getItem('token'))
   }
 
   render() {
@@ -67,11 +47,10 @@ class Home extends Component {
             </tbody>
           </table>
         }
+        <button>
+          <Link to='/birthday'>Birthday page</Link></button>
         <button onClick={this.props.logout}>
-          <Link to='/'>Logout</Link></button>
-
-        {/* <button onClick={this.logout}>
-          <Link to='/'>Logout</Link></button> */}
+          <Link to='/login'>Logout</Link></button>
       </React.Fragment>
     )
   }
@@ -81,6 +60,6 @@ const mapStateToProps = state => (
   { token: state.auth.token }
 )
 
-const mapDispatchToProps = { logout }
+const mapDispatchToProps = { logout, getUser }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
